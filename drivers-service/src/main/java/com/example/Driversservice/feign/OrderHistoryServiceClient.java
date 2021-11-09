@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 @FeignClient(name = "order-history-service")
-@LoadBalancerClient(name = "order-history-service")
 public interface OrderHistoryServiceClient {
 
     @GetMapping(value = "/history/{orderId}")

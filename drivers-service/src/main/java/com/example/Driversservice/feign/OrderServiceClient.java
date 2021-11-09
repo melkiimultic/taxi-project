@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "orders-service")
-@LoadBalancerClient(name = "orders-service")
 public interface OrderServiceClient {
 
     @PostMapping( value = "/order/update")

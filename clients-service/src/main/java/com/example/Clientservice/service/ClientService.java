@@ -9,9 +9,11 @@ import com.example.Clientservice.exceptions.OrderProcessingException;
 import com.example.Clientservice.feign.OrderServiceClient;
 import com.example.Clientservice.repo.ClientsRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 
 @Service
@@ -21,6 +23,7 @@ public class ClientService {
     private final ClientsRepo clientsRepo;
     private final PasswordEncoder encoder;
     private final OrderServiceClient orderServiceClient;
+
 
     @Transactional
     public Long createClient(CreateClientDTO createClientDTO) {
@@ -46,7 +49,7 @@ public class ClientService {
     }
 
     public String provideOrderInfo(OrderMsgDTO orderMsgDTO) {
-        if (orderMsgDTO.getId() != -1L) {
+        if(orderMsgDTO.getId()!=-1L){
             return "Order №" + orderMsgDTO.getId() + " has changed status to " + orderMsgDTO.getStatus();
         }
         throw new OrderProcessingException(""); //TODO msg

@@ -10,4 +10,5 @@ public interface OrderServiceClient {
 
     @PostMapping(value = "/order/create")
     Long createOrder(@RequestBody CreateOrderDTO createOrderDTO);
+
 }
