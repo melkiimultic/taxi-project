@@ -22,7 +22,6 @@ public class ClientService {
     private final PasswordEncoder encoder;
     private final OrderServiceClient orderServiceClient;
 
-
     @Transactional
     public Long createClient(CreateClientDTO createClientDTO) {
         if (clientsRepo.existsByUsername(createClientDTO.getUsername())) {
@@ -47,7 +46,7 @@ public class ClientService {
     }
 
     public String provideOrderInfo(OrderMsgDTO orderMsgDTO) {
-        if(orderMsgDTO.getId()!=-1L){
+        if (orderMsgDTO.getId() != -1L) {
             return "Order №" + orderMsgDTO.getId() + " has changed status to " + orderMsgDTO.getStatus();
         }
         throw new OrderProcessingException(""); //TODO msg
