@@ -27,7 +27,7 @@ public class Client {
     private String firstName;
 
     @NotNull
-    @Column(name = "lastName")
+    @Column(name = "lastname")
     private String lastName;
 
     @NotNull

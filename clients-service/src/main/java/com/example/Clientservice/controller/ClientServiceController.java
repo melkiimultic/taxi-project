@@ -23,4 +23,8 @@ public class ClientServiceController {
     @PostMapping("/orderInfo")
     public String provideOrderInfo(@RequestBody OrderMsgDTO orderMsgDTO){ return clientService.provideOrderInfo(orderMsgDTO);}
 
+    @GetMapping("/hello")
+    public String greeting(){
+        return "hello";
+    }
 }

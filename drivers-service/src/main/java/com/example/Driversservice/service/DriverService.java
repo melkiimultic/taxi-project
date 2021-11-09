@@ -6,7 +6,7 @@ import com.example.Driversservice.dto.OrderMsgDTO;
 import com.example.Driversservice.dto.UpdateOrderDTO;
 import com.example.Driversservice.exceptions.EntityAlreadyExistsException;
 import com.example.Driversservice.exceptions.NoSuchUserException;
-import com.example.Driversservice.feign.HistoryOrderServiceClient;
+import com.example.Driversservice.feign.OrderHistoryServiceClient;
 import com.example.Driversservice.feign.OrderServiceClient;
 import com.example.Driversservice.repo.DriversRepo;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class DriverService {
     private final DriversRepo driversRepo;
     private final PasswordEncoder encoder;
     private final OrderServiceClient orderServiceClient;
-    private final HistoryOrderServiceClient historyOrderServiceClient;
+    private final OrderHistoryServiceClient orderHistoryServiceClient;
 
     @Transactional
     public Long createDriver(CreateDriverDTO createDriverDTO) {
@@ -54,6 +54,6 @@ public class DriverService {
 
     public List<OrderMsgDTO> getOrderHistory(Long orderId) {
         //just delegate to HistoryService
-        return historyOrderServiceClient.getOrderHistory(orderId);
+        return orderHistoryServiceClient.getOrderHistory(orderId);
     }
 }

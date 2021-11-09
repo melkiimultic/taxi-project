@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-@Table(name = "History")
+@Table(name = "history")
 public class HistoryEntry {
 
     @Id
@@ -29,14 +29,15 @@ public class HistoryEntry {
 
     @NotNull
     @NotEmpty
+    @Column(name = "userId")
     private Long userId;
 
-    @NotNull
-    @NotEmpty
+    @Column(name = "driver")
     private String driver;
 
     @NotNull
     @NotEmpty
+    @Column(name = "dateTime")
     private LocalDateTime localDateTime;
 
 }

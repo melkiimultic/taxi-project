@@ -25,8 +25,6 @@ public class Order {
     @Column(name = "userId")
     private Long userId;
 
-    @NotNull
-    @NotEmpty
     @Column(name = "driver")
     private String driver;
 
