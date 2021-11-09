@@ -17,7 +17,7 @@ public class ServiceInstanceListSupplierConfig {
     @Bean
     public ServiceInstanceListSupplier supplier() {
         List<ServiceInstance> instances = new ArrayList<>();
-        return ServiceInstanceListSuppliers.from("orders-service", instances.toArray(ServiceInstance[]::new));
+        return ServiceInstanceListSuppliers.from("orders-serviceeee", instances.toArray(ServiceInstance[]::new));
     }
 
     @Bean

@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "orders-service")
-@LoadBalancerClient(name = "orders-service", configuration = ServiceInstanceListSupplierConfig.class)
+@LoadBalancerClient(name = "orders-service"
+//        , configuration = ServiceInstanceListSupplierConfig.class
+)
 public interface OrderServiceClient {
 
     @PostMapping(value = "/order/create")
