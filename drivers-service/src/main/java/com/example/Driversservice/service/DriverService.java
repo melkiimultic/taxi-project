@@ -34,8 +34,8 @@ public class DriverService {
         Driver user = new Driver();
         user.setUsername(createDriverDTO.getUsername());
         user.setPassword(encoder.encode(createDriverDTO.getPassword()));
-        user.setFirstName(createDriverDTO.getFirstName());
-        user.setLastName(createDriverDTO.getLastName());
+        user.setFirstName(createDriverDTO.getFirstname());
+        user.setLastName(createDriverDTO.getLastname());
         user.setPhoneNumber(createDriverDTO.getPhoneNumber());
         Driver saved = driversRepo.save(user);
         return saved.getId();

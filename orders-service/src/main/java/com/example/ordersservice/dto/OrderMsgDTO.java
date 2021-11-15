@@ -22,8 +22,6 @@ public class OrderMsgDTO {
     @NotEmpty
     private Long userId;
 
-    @NotNull
-    @NotEmpty
     private String driver;
 
     @NotNull

@@ -9,11 +9,9 @@ import com.example.Clientservice.exceptions.OrderProcessingException;
 import com.example.Clientservice.feign.OrderServiceClient;
 import com.example.Clientservice.repo.ClientsRepo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 
 @Service
@@ -34,8 +32,8 @@ public class ClientService {
         Client user = new Client();
         user.setUsername(createClientDTO.getUsername());
         user.setPassword(encoder.encode(createClientDTO.getPassword()));
-        user.setFirstName(createClientDTO.getFirstName());
-        user.setLastName(createClientDTO.getLastName());
+        user.setFirstName(createClientDTO.getFirstname());
+        user.setLastName(createClientDTO.getLastname());
         user.setPhoneNumber(createClientDTO.getPhoneNumber());
         Client saved = clientsRepo.save(user);
         return saved.getId();

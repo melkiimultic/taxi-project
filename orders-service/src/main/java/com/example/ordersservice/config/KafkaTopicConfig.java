@@ -14,7 +14,7 @@ import java.util.Map;
 @Configuration
 public class KafkaTopicConfig {
 
-    @Value(value = "${kafka.bootstrapAddress}")
+    @Value(value = "${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
 
     @Bean
@@ -28,6 +28,6 @@ public class KafkaTopicConfig {
     //for more topics, add more bean of type NewTopic
     @Bean
     public NewTopic orderHistory() {
-        return new NewTopic("orderHistory", 3, (short) 2);
+        return new NewTopic("orderHistory", 3, (short) 1);
     }
 }

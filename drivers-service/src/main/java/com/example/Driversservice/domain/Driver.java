@@ -26,10 +26,10 @@ public class Driver {
     private String firstName;
 
     @NotNull
-    @Column(name = "lastName")
+    @Column(name = "lastname")
     private String lastName;
 
     @NotNull
-    @Column(name = "phoneNumber")
+    @Column(name = "phone_number")
     private String phoneNumber;
 }

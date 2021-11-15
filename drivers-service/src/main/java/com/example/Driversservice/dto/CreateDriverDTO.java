@@ -17,11 +17,11 @@ public class CreateDriverDTO {
 
     @NotNull
     @NotEmpty
-    private String firstName;
+    private String firstname;
 
     @NotNull
     @NotEmpty
-    private String lastName;
+    private String lastname;
 
     @NotNull
     @NotEmpty
