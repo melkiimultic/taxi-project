@@ -40,17 +40,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ClientServiceControllerTest {
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
     @Autowired
-    ClientsRepo clients;
+    private ClientsRepo clients;
     @Autowired
-    TransactionTemplate template;
+    private TransactionTemplate template;
     @Autowired
-    PasswordEncoder encoder;
+    private PasswordEncoder encoder;
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
     @MockBean
-    OrderServiceClient orderServiceClient;
+    private OrderServiceClient orderServiceClient;
 
     @BeforeEach
     @AfterEach

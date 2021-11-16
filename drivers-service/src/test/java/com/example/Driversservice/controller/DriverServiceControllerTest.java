@@ -44,19 +44,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class DriverServiceControllerTest {
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
     @Autowired
-    DriversRepo driversRepo;
+    private DriversRepo driversRepo;
     @Autowired
-    PasswordEncoder encoder;
+    private PasswordEncoder encoder;
     @Autowired
-    TransactionTemplate template;
+    private TransactionTemplate template;
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
     @MockBean
-    OrderServiceClient orderServiceClient;
+    private OrderServiceClient orderServiceClient;
     @MockBean
-    OrderHistoryServiceClient historyServiceClient;
+    private OrderHistoryServiceClient historyServiceClient;
 
     @BeforeEach
     @AfterEach
