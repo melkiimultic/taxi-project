@@ -12,4 +12,5 @@ import java.util.List;
 public interface HistoryEntryRepo extends JpaRepository<HistoryEntry,Long> {
 
     List <HistoryEntry> findAllByOrderId(Long orderId);
+
 }

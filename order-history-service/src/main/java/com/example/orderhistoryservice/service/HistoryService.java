@@ -7,6 +7,7 @@ import com.example.orderhistoryservice.repo.HistoryEntryRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.Comparator;
 import java.util.List;
@@ -22,6 +23,9 @@ public class HistoryService {
    @Transactional
    public List<OrderMsgDTO> getOrderHistory(Long orderId) {
       List<HistoryEntry> entries = historyEntryRepo.findAllByOrderId(orderId);
+      if(entries.isEmpty()){
+         throw new EntityNotFoundException("Order №"+orderId+" doesn't exist");
+      }
       return entries.stream().map(entryDtoMapper::toDTO)
               .sorted(Comparator.comparing(OrderMsgDTO::getLocalDateTime)).collect(Collectors.toList());
 
