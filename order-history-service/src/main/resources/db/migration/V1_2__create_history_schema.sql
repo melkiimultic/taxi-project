@@ -3,10 +3,10 @@ CREATE TABLE IF NOT EXISTS history
     id  bigint not null
         constraint entry_pkey
             primary key ,
-    orderId  bigint not null,
+    order_id  bigint not null,
     status      varchar(50),
-    userId   bigint not null,
+    user_id   bigint not null,
     driver   varchar(50),
-    dateTime TIMESTAMP
+    date_time TIMESTAMP
 
 );

@@ -12,7 +12,7 @@ public class OrderMsgDTO {
 
     @NotNull
     @NotEmpty
-    private Long id;
+    private Long id; //orderId
 
     @NotNull
     @NotEmpty

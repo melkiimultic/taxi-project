@@ -18,7 +18,7 @@ public class HistoryEntry {
 
     @NotNull
     @NotEmpty
-    @Column(name = "orderId")
+    @Column(name = "order_id")
     private Long orderId;
 
     @NotNull
@@ -29,7 +29,7 @@ public class HistoryEntry {
 
     @NotNull
     @NotEmpty
-    @Column(name = "userId")
+    @Column(name = "user_id")
     private Long userId;
 
     @Column(name = "driver")
@@ -37,7 +37,7 @@ public class HistoryEntry {
 
     @NotNull
     @NotEmpty
-    @Column(name = "dateTime")
+    @Column(name = "date_time")
     private LocalDateTime localDateTime;
 
 }
