@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 @Service
@@ -39,11 +40,11 @@ public class ClientService {
         return saved.getId();
     }
 
-    public Long createOrder(CreateOrderDTO createOrderDTO) {
+    public OrderMsgDTO createOrder(CreateOrderDTO createOrderDTO) {
         if (clientsRepo.existsById(createOrderDTO.getClientId())) {
             return orderServiceClient.createOrder(createOrderDTO);
         }
-        throw new EntityAlreadyExistsException("Such user doesn't exist");
+        throw new EntityNotFoundException("Sign up to create an order");
     }
 
     public String provideOrderInfo(OrderMsgDTO orderMsgDTO) {

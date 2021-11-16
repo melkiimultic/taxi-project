@@ -29,7 +29,7 @@ public class OrderService {
     private final KafkaProducerService producerService;
 
     @Transactional
-    public Long createOrder(CreateOrderDTO createOrderDTO) {
+    public OrderMsgDTO createOrder(CreateOrderDTO createOrderDTO) {
         Order order = new Order();
         order.setStatus(OrderStatus.CREATED);
         order.setUserId(createOrderDTO.getClientId());
@@ -40,11 +40,7 @@ public class OrderService {
         OrderMsgDTO orderMsgDTO = orderDtoMapper.toOrderMsgDTO(order);
         orderMsgDTO.setLocalDateTime(LocalDateTime.now());
         producerService.sendMessage(orderMsgDTO);
-
-        //then send info about order back to the client
-        clientServiceClient.provideOrderInfo(orderMsgDTO);
-
-        return savedId;
+        return orderMsgDTO;
     }
 
     @Transactional

@@ -18,10 +18,7 @@ public class ClientServiceController {
     public Long createClient(@RequestBody CreateClientDTO createClientDTO){ return clientService.createClient(createClientDTO);}
 
     @PostMapping("/createOrder")
-    public Long createOrder(@RequestBody CreateOrderDTO createOrderDTO){ return clientService.createOrder(createOrderDTO);}
-
-    @PostMapping("/orderInfo")
-    public String provideOrderInfo(@RequestBody OrderMsgDTO orderMsgDTO){ return clientService.provideOrderInfo(orderMsgDTO);}
+    public OrderMsgDTO createOrder(@RequestBody CreateOrderDTO createOrderDTO){ return clientService.createOrder(createOrderDTO);}
 
     @GetMapping("/hello")
     public String greeting(){
