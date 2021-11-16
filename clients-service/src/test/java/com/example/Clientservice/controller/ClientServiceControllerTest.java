@@ -10,9 +10,9 @@ import com.example.Clientservice.repo.ClientsRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,9 +30,8 @@ import java.time.LocalTime;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,22 +41,18 @@ class ClientServiceControllerTest {
 
     @Autowired
     MockMvc mockMvc;
-
     @Autowired
     ClientsRepo clients;
-
     @Autowired
     TransactionTemplate template;
-
     @Autowired
     PasswordEncoder encoder;
-
     @Autowired
     ObjectMapper mapper;
-
     @MockBean
     OrderServiceClient orderServiceClient;
 
+    @BeforeEach
     @AfterEach
     public void cleanDB(){
         clients.deleteAll();
@@ -75,13 +70,12 @@ class ClientServiceControllerTest {
 
         template.executeWithoutResult(tr->{
             Optional<Client> user = clients.findOneByUsername("test");
-            assertEquals(true,user.isPresent());
+            assertTrue(user.isPresent());
             Client client = user.get();
             assertEquals("First",client.getFirstName());
             assertEquals("Last", client.getLastName());
             assertEquals("79031112233",client.getPhoneNumber());
             assertTrue(encoder.matches("test1",client.getPassword()));
-            clients.delete(client);
         });
     }
 
@@ -132,7 +126,7 @@ class ClientServiceControllerTest {
         msg.setStatus(OrderStatus.CREATED);
         msg.setUserId(userId.get());
         LocalDate date = LocalDate.of(2021, 11, 16);
-        LocalTime time = LocalTime.of(00, 00);
+        LocalTime time = LocalTime.of(12, 12);
         msg.setLocalDateTime(LocalDateTime.of(date,time));
 
         when(orderServiceClient.createOrder(dto)).thenReturn(msg);
@@ -143,10 +137,7 @@ class ClientServiceControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         OrderMsgDTO response = mapper.readValue(mvcResult.getResponse().getContentAsString(), OrderMsgDTO.class);
-        assertEquals(1L,response.getId());
-        assertEquals(OrderStatus.CREATED,response.getStatus());
-        assertEquals(userId.get(),response.getUserId());
-        assertEquals(LocalDateTime.of(date,time),response.getLocalDateTime());
+        assertTrue(response.equals(msg));
     }
 
     @Test

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(name = "/driver")
+@RequestMapping("/driver")
 @RequiredArgsConstructor
 public class DriverServiceController {
 
@@ -20,11 +20,9 @@ public class DriverServiceController {
     public Long createDriver(@RequestBody CreateDriverDTO createDriverDTO){ return driverService.createDriver(createDriverDTO);}
 
     @PostMapping("/update")
-    public void updateOrder(@RequestBody UpdateOrderDTO updateOrderDTO){ driverService.updateOrder(updateOrderDTO);}
+    public OrderMsgDTO updateOrder(@RequestBody UpdateOrderDTO updateOrderDTO){ return driverService.updateOrder(updateOrderDTO);}
 
     @GetMapping("/history/{orderId}")
     public List<OrderMsgDTO> getOrderHistory(@PathVariable("orderId") Long orderId){ return driverService.getOrderHistory(orderId);}
-
-
 
 }

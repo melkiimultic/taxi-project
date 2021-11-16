@@ -10,5 +10,4 @@ CREATE TABLE IF NOT EXISTS drivers
     firstname   varchar(50),
     lastname    varchar(50),
     phone_number varchar(12)
-
 );

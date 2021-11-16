@@ -49,7 +49,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Long updateOrder(UpdateOrderDTO updateOrderDTO) {
+    public OrderMsgDTO updateOrder(UpdateOrderDTO updateOrderDTO) {
         Optional<Order> orderOpt = orderRepo.findById(updateOrderDTO.getOrderId());
         if (orderOpt.isEmpty()) {
             throw new EntityNotFoundException();
@@ -66,9 +66,7 @@ public class OrderService {
         orderMsgDTO.setLocalDateTime(LocalDateTime.now());
         producerService.sendMessage(orderMsgDTO);
 
-        //then send info about order back to the client
-        clientServiceClient.provideOrderInfo(orderMsgDTO); //TODO same but for driver service?
-        return savedId;
+        return orderMsgDTO;
     }
 }
 

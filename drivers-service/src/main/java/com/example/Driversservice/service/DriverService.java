@@ -5,7 +5,6 @@ import com.example.Driversservice.dto.CreateDriverDTO;
 import com.example.Driversservice.dto.OrderMsgDTO;
 import com.example.Driversservice.dto.UpdateOrderDTO;
 import com.example.Driversservice.exceptions.EntityAlreadyExistsException;
-import com.example.Driversservice.exceptions.NoSuchUserException;
 import com.example.Driversservice.feign.OrderHistoryServiceClient;
 import com.example.Driversservice.feign.OrderServiceClient;
 import com.example.Driversservice.repo.DriversRepo;
@@ -13,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -42,14 +42,14 @@ public class DriverService {
     }
 
 
-    public void updateOrder(UpdateOrderDTO orderForDriverDTO) {
-        //check if driver exists
-        if (!driversRepo.existsByUsername(orderForDriverDTO.getUsername())) {
-            throw new NoSuchUserException("User with username " + orderForDriverDTO.getUsername() +
+    public OrderMsgDTO updateOrder(UpdateOrderDTO updateOrderDTO) {
+        if (!driversRepo.existsByUsername(updateOrderDTO.getUsername())) {
+            throw new EntityNotFoundException("Driver with username " + updateOrderDTO.getUsername() +
                     " doesn't exist");
         }
-        //delegate to OrdersServiceApp
-        orderServiceClient.updateOrder(orderForDriverDTO);
+        //if driver exists, delegate to OrdersServiceApp
+        return orderServiceClient.updateOrder(updateOrderDTO);
+
     }
 
     public List<OrderMsgDTO> getOrderHistory(Long orderId) {

@@ -1,5 +1,6 @@
 package com.example.Driversservice.feign;
 
+import com.example.Driversservice.dto.OrderMsgDTO;
 import com.example.Driversservice.dto.UpdateOrderDTO;
 import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -10,6 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface OrderServiceClient {
 
     @PostMapping( value = "/order/update")
-    Long updateOrder (@RequestBody UpdateOrderDTO updateOrderDTO);
+    OrderMsgDTO updateOrder (@RequestBody UpdateOrderDTO updateOrderDTO);
 
 }

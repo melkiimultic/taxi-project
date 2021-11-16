@@ -22,7 +22,7 @@ public class OrderServiceController {
         return orderService.createOrder(createOrderDTO);
     }
     @PostMapping(value = "/update")
-    public Long updateOrder(@RequestBody UpdateOrderDTO updateOrderDTO) {
+    public OrderMsgDTO updateOrder(@RequestBody UpdateOrderDTO updateOrderDTO) {
         return orderService.updateOrder(updateOrderDTO);
     }
 

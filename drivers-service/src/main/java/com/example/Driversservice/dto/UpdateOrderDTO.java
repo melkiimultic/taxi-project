@@ -1,5 +1,6 @@
 package com.example.Driversservice.dto;
 
+import com.example.Driversservice.domain.OrderStatus;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
@@ -18,7 +19,7 @@ public class UpdateOrderDTO {
 
     @NotNull
     @NotEmpty
-    private String status;
+    private OrderStatus status;
 
 
 
