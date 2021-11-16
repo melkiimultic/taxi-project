@@ -5,7 +5,6 @@ import com.example.Clientservice.dto.CreateClientDTO;
 import com.example.Clientservice.dto.CreateOrderDTO;
 import com.example.Clientservice.dto.OrderMsgDTO;
 import com.example.Clientservice.exceptions.EntityAlreadyExistsException;
-import com.example.Clientservice.exceptions.OrderProcessingException;
 import com.example.Clientservice.feign.OrderServiceClient;
 import com.example.Clientservice.repo.ClientsRepo;
 import lombok.RequiredArgsConstructor;
@@ -47,10 +46,4 @@ public class ClientService {
         throw new EntityNotFoundException("Sign up to create an order");
     }
 
-    public String provideOrderInfo(OrderMsgDTO orderMsgDTO) {
-        if(orderMsgDTO.getId()!=-1L){
-            return "Order №" + orderMsgDTO.getId() + " has changed status to " + orderMsgDTO.getStatus();
-        }
-        throw new OrderProcessingException(""); //TODO msg
-    }
 }

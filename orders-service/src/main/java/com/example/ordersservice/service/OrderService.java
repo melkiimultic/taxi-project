@@ -33,8 +33,7 @@ public class OrderService {
         Order order = new Order();
         order.setStatus(OrderStatus.CREATED);
         order.setUserId(createOrderDTO.getClientId());
-        Order saved = orderRepo.save(order);
-        final Long savedId = saved.getId();
+        orderRepo.save(order);
 
         //when order has been created send msg to kafka    TODO if smth goes wrong at 1st or 2nd step?
         OrderMsgDTO orderMsgDTO = orderDtoMapper.toOrderMsgDTO(order);
