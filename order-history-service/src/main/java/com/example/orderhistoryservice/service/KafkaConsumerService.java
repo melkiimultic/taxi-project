@@ -5,6 +5,7 @@ import com.example.orderhistoryservice.dto.OrderMsgDTO;
 import com.example.orderhistoryservice.mapper.EntryDtoMapper;
 import com.example.orderhistoryservice.repo.HistoryEntryRepo;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +20,8 @@ public class KafkaConsumerService {
 
     @KafkaListener(topics = "orderHistory", groupId = "history")
     @Transactional
-    public void consume(OrderMsgDTO orderMsgDTO) {
-            HistoryEntry historyEntry = entryDtoMapper.fromDTO(orderMsgDTO);
+    public void consume(ConsumerRecord<String, OrderMsgDTO> cr ) {
+            HistoryEntry historyEntry = entryDtoMapper.fromDTO(cr.value());
             historyEntryRepo.save(historyEntry);
     }
 

@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepo orderRepo;
-    private final ClientServiceClient clientServiceClient;
     private final OrderDtoMapper orderDtoMapper;
     private final KafkaProducerService producerService;
 
