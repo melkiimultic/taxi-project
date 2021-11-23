@@ -31,7 +31,7 @@ public class OrderService {
     public OrderMsgDTO createOrder(CreateOrderDTO createOrderDTO) {
         Order order = new Order();
         order.setStatus(OrderStatus.CREATED);
-        order.setUserId(createOrderDTO.getClientId());
+        order.setUserId(createOrderDTO.getUserId());
         orderRepo.save(order);
 
         //when order has been created send msg to kafka    TODO if smth goes wrong at 1st or 2nd step?
@@ -43,7 +43,7 @@ public class OrderService {
 
     @Transactional
     public List<OrderIdDto> getUnassigned() {
-        List<Order> unassigned = orderRepo.findByStatus(OrderStatus.CREATED.name());
+        List<Order> unassigned = orderRepo.findByStatus(OrderStatus.CREATED);
         return unassigned.stream().map(orderDtoMapper::toOrderIdDTO).collect(Collectors.toList());
     }
 
@@ -55,10 +55,9 @@ public class OrderService {
         }
         //update fields in DB
         Order order = orderOpt.get();
-        order.setDriver(updateOrderDTO.getUsername());
-        order.setStatus(OrderStatus.valueOf(updateOrderDTO.getStatus())); //TODO sequence of statuses check?
-        Order saved = orderRepo.save(order);
-        final Long savedId = saved.getId();
+        order.setDriver(updateOrderDTO.getDriver());
+        order.setStatus(updateOrderDTO.getStatus()); //TODO sequence of statuses check?
+        orderRepo.save(order);
 
         //when order has been updated send msg to kafka
         OrderMsgDTO orderMsgDTO = orderDtoMapper.toOrderMsgDTO(order);

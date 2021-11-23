@@ -6,7 +6,6 @@ import com.example.orderhistoryservice.domain.OrderStatus;
 import com.example.orderhistoryservice.dto.OrderMsgDTO;
 import com.example.orderhistoryservice.mapper.EntryDtoMapper;
 import com.example.orderhistoryservice.repo.HistoryEntryRepo;
-import com.example.orderhistoryservice.service.HistoryService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -19,7 +18,6 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -41,15 +39,11 @@ class HistoryServiceControllerTest {
     @Autowired
     private HistoryEntryRepo historyRepo;
     @Autowired
-    TransactionTemplate template;
-    @Autowired
-    HistoryService historyService;
-    @Autowired
     ObjectMapper mapper;
     @Autowired
     EntryDtoMapper dtoMapper;
 
-    public static KafkaContainer kafka =  new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.2.1"));
+    public static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.2.1"));
 
     @BeforeAll
     static void startKafka() {

@@ -2,11 +2,13 @@ package com.example.ordersservice.config;
 
 import com.example.ordersservice.dto.OrderMsgDTO;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -41,10 +43,7 @@ public class KafkaTestContainersConfiguration {
                 JsonDeserializer.class);
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
-//        props.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, JsonDeserializer.class);
-//        props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
-        JsonDeserializer<OrderMsgDTO> deserializer = new JsonDeserializer<>(OrderMsgDTO.class);
-        deserializer.addTrustedPackages("*");
+        props.put(JsonDeserializer.TRUSTED_PACKAGES , "*");
         return new DefaultKafkaConsumerFactory<>(props);
     }
 

@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS orders
         constraint order_pkey
             primary key ,
     status      varchar(50),
-    userId   bigint not null,
+    user_id   bigint not null,
     driver   varchar(50)
 
 );

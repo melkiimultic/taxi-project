@@ -96,6 +96,6 @@ public class KafkaConsumerServiceTest {
         assertEquals(1, entries.size());
         OrderMsgDTO dtoFromDB = dtoMapper.toDTO(entries.get(0));
         assertEquals(dto, dtoFromDB);
-
     }
+
 }

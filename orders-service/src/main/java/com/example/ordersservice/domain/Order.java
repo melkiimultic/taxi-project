@@ -23,7 +23,7 @@ public class Order {
 
     @NotNull
     @NotEmpty
-    @Column(name = "userId")
+    @Column(name = "user_id")
     private Long userId;
 
     @Column(name = "driver")

@@ -35,9 +35,7 @@ public class KafkaTestContainersConfiguration {
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                 JsonSerializer.class);
         configProps.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
-        JsonDeserializer<OrderMsgDTO> deserializer = new JsonDeserializer<>(OrderMsgDTO.class);
-        deserializer.addTrustedPackages("*");
-        deserializer.setUseTypeHeaders(false);
+        configProps.put(JsonDeserializer.TRUSTED_PACKAGES , "*");
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 

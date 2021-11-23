@@ -202,7 +202,7 @@ class DriverServiceControllerTest {
         MvcResult mvcResult = mockMvc.perform(get("/driver/history/1"))
                 .andExpect(status().isOk())
                 .andReturn();
-        List<OrderMsgDTO> orderMsgDTOS = mapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<OrderMsgDTO>>() {
+        List<OrderMsgDTO> orderMsgDTOS = mapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
         });
         assertEquals(orderMsg, orderMsgDTOS.get(0));
         assertEquals(orderMsg2, orderMsgDTOS.get(1));

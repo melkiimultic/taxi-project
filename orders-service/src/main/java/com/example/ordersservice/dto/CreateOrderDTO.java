@@ -9,5 +9,5 @@ import javax.validation.constraints.NotEmpty;
 public class CreateOrderDTO {
     @NotNull
     @NotEmpty
-    private Long clientId;
+    private Long userId;
 }
