@@ -8,8 +8,6 @@ import com.example.ordersservice.dto.OrderIdDto;
 import com.example.ordersservice.dto.OrderMsgDTO;
 import com.example.ordersservice.dto.UpdateOrderDTO;
 import com.example.ordersservice.repo.OrderRepo;
-import com.example.ordersservice.service.KafkaProducerService;
-import com.example.ordersservice.service.OrderService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -17,7 +15,6 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -93,9 +90,9 @@ class OrderServiceControllerTest {
                 .andReturn();
         OrderMsgDTO orderMsgDTO = mapper.readValue(mvcResult.getResponse().getContentAsString(), OrderMsgDTO.class);
         assertNotNull(orderMsgDTO.getId());
-        assertEquals(LocalDate.now(),orderMsgDTO.getLocalDateTime().toLocalDate());
-        assertEquals(createDTO.getUserId(),orderMsgDTO.getUserId());
-        assertEquals(OrderStatus.CREATED,orderMsgDTO.getStatus());
+        assertEquals(LocalDate.now(), orderMsgDTO.getLocalDateTime().toLocalDate());
+        assertEquals(createDTO.getUserId(), orderMsgDTO.getUserId());
+        assertEquals(OrderStatus.CREATED, orderMsgDTO.getStatus());
         assertNull(orderMsgDTO.getDriver());
     }
 
@@ -116,11 +113,11 @@ class OrderServiceControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         OrderMsgDTO orderMsgDTO = mapper.readValue(mvcResult.getResponse().getContentAsString(), OrderMsgDTO.class);
-        assertEquals(LocalDate.now(),orderMsgDTO.getLocalDateTime().toLocalDate());
-        assertEquals(updateDTO.getOrderId(),orderMsgDTO.getId());
+        assertEquals(LocalDate.now(), orderMsgDTO.getLocalDateTime().toLocalDate());
+        assertEquals(updateDTO.getOrderId(), orderMsgDTO.getId());
         assertEquals(1L, orderMsgDTO.getUserId());
-        assertEquals(OrderStatus.ASSIGNED,orderMsgDTO.getStatus());
-        assertEquals(updateDTO.getDriver(),orderMsgDTO.getDriver());
+        assertEquals(OrderStatus.ASSIGNED, orderMsgDTO.getStatus());
+        assertEquals(updateDTO.getDriver(), orderMsgDTO.getDriver());
     }
 
     @Test

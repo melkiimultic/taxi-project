@@ -8,7 +8,6 @@ import com.example.ordersservice.dto.OrderMsgDTO;
 import com.example.ordersservice.dto.UpdateOrderDTO;
 import com.example.ordersservice.mapper.OrderDtoMapper;
 import com.example.ordersservice.repo.OrderRepo;
-import lombok.SneakyThrows;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +35,13 @@ import static org.mockito.Mockito.when;
 @Import(KafkaTestContainersConfiguration.class)
 public class KafkaProducerTest {
     @Autowired
-    OrderService orderService;
+    private OrderService orderService;
     @MockBean
-    OrderRepo orderRepo;
+    private OrderRepo orderRepo;
     @MockBean
     private OrderDtoMapper orderDtoMapper;
 
+    //List should be static for working in multiple tests
     private static List<ConsumerRecord<String, OrderMsgDTO>> records = new ArrayList<>();
 
     private final String topic = "orderHistory";
@@ -75,7 +75,6 @@ public class KafkaProducerTest {
 
     @Test
     @DisplayName("Created order was sent to kafka")
-    @SneakyThrows
     public void createdOrderWasSentToKafka() {
 
         CreateOrderDTO createDTO = new CreateOrderDTO();
@@ -108,7 +107,6 @@ public class KafkaProducerTest {
 
     @Test
     @DisplayName("Updated order was sent to kafka")
-    @SneakyThrows
     public void updatedOrderWasSentToKafka() {
         UpdateOrderDTO updateDTO = new UpdateOrderDTO();
         updateDTO.setOrderId(1L);

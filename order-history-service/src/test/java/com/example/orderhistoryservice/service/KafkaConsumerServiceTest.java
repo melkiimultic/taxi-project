@@ -6,7 +6,6 @@ import com.example.orderhistoryservice.domain.OrderStatus;
 import com.example.orderhistoryservice.dto.OrderMsgDTO;
 import com.example.orderhistoryservice.mapper.EntryDtoMapper;
 import com.example.orderhistoryservice.repo.HistoryEntryRepo;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -80,7 +79,6 @@ public class KafkaConsumerServiceTest {
 
     @Test
     @DisplayName("Read by Kafka message was saved to DB")
-    @SneakyThrows
     public void sentMsgWasSaved() {
 
         LocalDate date = LocalDate.of(2021, 12, 12);
