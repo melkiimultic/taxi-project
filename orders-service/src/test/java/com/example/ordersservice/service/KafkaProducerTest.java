@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -96,7 +97,6 @@ public class KafkaProducerTest {
 
         await().atMost(10, TimeUnit.SECONDS)
                 .until(() -> !records.isEmpty());
-
         assertEquals(1, records.size());
         ConsumerRecord<String, OrderMsgDTO> recordsEntry = records.get(0);
         assertEquals(String.valueOf(msgDTO.getId()), recordsEntry.key());

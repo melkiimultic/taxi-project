@@ -8,6 +8,7 @@ import com.example.Clientservice.dto.OrderMsgDTO;
 import com.example.Clientservice.feign.OrderServiceClient;
 import com.example.Clientservice.repo.ClientsRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

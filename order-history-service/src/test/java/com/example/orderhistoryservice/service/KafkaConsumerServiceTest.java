@@ -57,9 +57,7 @@ public class KafkaConsumerServiceTest {
     private EntryDtoMapper dtoMapper;
     @Autowired
     private HistoryEntryRepo entryRepo;
-
-    @Value(("${spring.test.topic}"))
-    private String topic;
+    private String topic = "orderHistory";
 
     @BeforeEach
     @AfterEach

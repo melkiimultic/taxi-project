@@ -25,8 +25,7 @@ public class KafkaConsumerConfig {
     private String bootstrapAddress;
     @Value(value ="${spring.kafka.consumer.group-id:''}")
     private String groupId;
-    @Value(value = "${spring.test.topic}")
-    private String topic;
+    private String topic = "orderHistory";
 
     @Bean
     public ConsumerFactory<String, OrderMsgDTO> consumerFactory() {
