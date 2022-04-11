@@ -4,6 +4,7 @@ import com.example.Driversservice.ResourceConverter;
 import com.example.Driversservice.domain.Driver;
 import com.example.Driversservice.domain.OrderStatus;
 import com.example.Driversservice.dto.OrderMsgDTO;
+import com.example.Driversservice.dto.UnassignedOrderDto;
 import com.example.Driversservice.dto.UpdateOrderDTO;
 import com.example.Driversservice.feign.OrderHistoryServiceClient;
 import com.example.Driversservice.feign.OrderServiceClient;
@@ -29,6 +30,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,7 +116,7 @@ class DriverServiceControllerTest {
     @Test
     @DisplayName("Update an order if driver isn't in DB")
     @SneakyThrows
-    public void updateOrderByUnsignedDriver(){
+    public void updateOrderByUnsignedDriver() {
         UpdateOrderDTO updateOrderDTO = new UpdateOrderDTO();
         updateOrderDTO.setUsername("test");
         updateOrderDTO.setOrderId(1L);
@@ -128,13 +131,13 @@ class DriverServiceControllerTest {
         String contentAsString = mvcResult.getResponse().getContentAsString();
 
         assertEquals("Driver with username " + updateOrderDTO.getUsername() +
-                " doesn't exist",contentAsString);
+                " doesn't exist", contentAsString);
     }
 
     @Test
     @DisplayName("Update the order status by the driver")
     @SneakyThrows
-    public void updateOrderByDriver(){
+    public void updateOrderByDriver() {
         Driver driver = new Driver();
         driver.setUsername("test");
         driver.setPassword(encoder.encode("test1"));
@@ -167,15 +170,13 @@ class DriverServiceControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         OrderMsgDTO response = mapper.readValue(mvcResult.getResponse().getContentAsString(), OrderMsgDTO.class);
-
-        assertTrue(orderMsg.equals(response));
-
+        assertEquals(orderMsg, response);
     }
 
     @Test
     @DisplayName("get order's history")
     @SneakyThrows
-    public void getHistory(){
+    public void getHistory() {
         OrderMsgDTO orderMsg = new OrderMsgDTO();
         orderMsg.setId(1L);
         orderMsg.setStatus(OrderStatus.CREATED);
@@ -195,7 +196,7 @@ class DriverServiceControllerTest {
         LocalDateTime localDateTime1 = LocalDateTime.of(date1, time1);
         orderMsg2.setLocalDateTime(localDateTime1);
 
-        List<OrderMsgDTO> msgs = List.of(orderMsg,orderMsg2);
+        List<OrderMsgDTO> msgs = List.of(orderMsg, orderMsg2);
 
         when(historyServiceClient.getOrderHistory(1L)).thenReturn(msgs);
 
@@ -209,8 +210,40 @@ class DriverServiceControllerTest {
 
     }
 
+    @Test
+    @DisplayName("get unassigned orders happy path")
+    @SneakyThrows
+    public void getUnassigned() {
+        UnassignedOrderDto unassignedOrderDto = new UnassignedOrderDto();
+        unassignedOrderDto.setId(1L);
+        unassignedOrderDto.setDeparture("from");
+        unassignedOrderDto.setArrival("to");
+        List<UnassignedOrderDto> orderDtoList = Collections.singletonList(unassignedOrderDto);
 
+        when(orderServiceClient.getUnassigned()).thenReturn(orderDtoList);
 
+        MvcResult mvcResult = mockMvc.perform(get("/driver/unassigned"))
+                .andExpect(status().isOk())
+                .andReturn();
+        List<UnassignedOrderDto> unassignedFromRes = mapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
+        });
+        assertEquals(1, unassignedFromRes.size());
+        assertEquals(unassignedOrderDto.getId(), unassignedFromRes.get(0).getId());
+        assertEquals(unassignedOrderDto.getArrival(), unassignedFromRes.get(0).getArrival());
+        assertEquals(unassignedOrderDto.getDeparture(), unassignedFromRes.get(0).getDeparture());
+    }
 
-
+    @Test
+    @DisplayName("unassigned orders don't exist")
+    @SneakyThrows
+    public void getEmptyListOfUnassigned() {
+        List<UnassignedOrderDto> orderDtoList = new ArrayList<>();
+        when(orderServiceClient.getUnassigned()).thenReturn(orderDtoList);
+        MvcResult mvcResult = mockMvc.perform(get("/driver/unassigned"))
+                .andExpect(status().isOk())
+                .andReturn();
+        List<UnassignedOrderDto> unassignedFromRes = mapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
+        });
+        assertEquals(0, unassignedFromRes.size());
+    }
 }

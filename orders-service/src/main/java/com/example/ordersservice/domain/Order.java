@@ -1,10 +1,10 @@
 package com.example.ordersservice.domain;
 
-import com.sun.istack.NotNull;
 import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
@@ -16,20 +16,23 @@ public class Order {
     private Long id;
 
     @NotNull
-    @NotEmpty
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private OrderStatus status;
 
     @NotNull
-    @NotEmpty
     @Column(name = "user_id")
     private Long userId;
 
     @Column(name = "driver")
     private String driver;
 
+    @NotEmpty
+    @Column(name = "departure")
+    private String departure;
 
-
+    @NotEmpty
+    @Column(name = "arrival")
+    private String arrival;
 
 }

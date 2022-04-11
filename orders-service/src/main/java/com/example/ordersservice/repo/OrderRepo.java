@@ -12,6 +12,8 @@ import java.util.List;
 @Transactional
 public interface OrderRepo extends JpaRepository<Order,Long> {
 
-    List<Order> findByStatus(OrderStatus status);
+    List<Order> findByStatus(OrderStatus status); //TODO and driver is null
+
+    //TODO create indices
 
 }

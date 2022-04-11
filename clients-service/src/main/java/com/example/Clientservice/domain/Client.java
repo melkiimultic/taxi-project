@@ -1,9 +1,10 @@
 package com.example.Clientservice.domain;
 
-import com.sun.istack.NotNull;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
@@ -14,25 +15,24 @@ public class Client {
     @GeneratedValue()
     private Long id;
 
-    @NotNull
+    @NotEmpty
     @Column(name = "username", unique = true)
     private String username;
 
-    @NotNull
+    @NotEmpty
     @Column(name = "password")
     private String password;
 
-    @NotNull
+    @NotEmpty
     @Column(name = "firstname")
     private String firstName;
 
-    @NotNull
+    @NotEmpty
     @Column(name = "lastname")
     private String lastName;
 
-    @NotNull
+    @NotEmpty
     @Column(name = "phone_number")
     private String phoneNumber;
-
 
 }

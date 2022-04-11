@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
@@ -41,6 +42,8 @@ class HistoryServiceTest {
         entry.setStatus(status);
         entry.setUserId(userId);
         entry.setDriver(driver);
+        entry.setDeparture("from");
+        entry.setArrival("to");
         entry.setLocalDateTime(dateTime);
         return entry;
     }

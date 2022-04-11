@@ -44,9 +44,7 @@ public class KafkaConsumerServiceTest {
 
     @DynamicPropertySource
     static void kafkaProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", () -> {
-            return kafka.getHost() + ":" + kafka.getFirstMappedPort();
-        });
+        registry.add("spring.kafka.bootstrap-servers", () -> kafka.getHost() + ":" + kafka.getFirstMappedPort());
     }
 
     @Autowired
@@ -71,6 +69,8 @@ public class KafkaConsumerServiceTest {
         dto.setStatus(status);
         dto.setUserId(userId);
         dto.setDriver(driver);
+        dto.setDeparture("from");
+        dto.setArrival("to");
         dto.setLocalDateTime(dateTime);
         return dto;
     }

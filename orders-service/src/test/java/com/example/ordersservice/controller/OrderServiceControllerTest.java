@@ -4,7 +4,7 @@ import com.example.ordersservice.config.KafkaTestContainersConfiguration;
 import com.example.ordersservice.domain.Order;
 import com.example.ordersservice.domain.OrderStatus;
 import com.example.ordersservice.dto.CreateOrderDTO;
-import com.example.ordersservice.dto.OrderIdDto;
+import com.example.ordersservice.dto.UnassignedOrderDto;
 import com.example.ordersservice.dto.OrderMsgDTO;
 import com.example.ordersservice.dto.UpdateOrderDTO;
 import com.example.ordersservice.repo.OrderRepo;
@@ -58,9 +58,7 @@ class OrderServiceControllerTest {
 
     @DynamicPropertySource
     static void kafkaProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", () -> {
-            return kafka.getHost() + ":" + kafka.getFirstMappedPort();
-        });
+        registry.add("spring.kafka.bootstrap-servers", () -> kafka.getHost() + ":" + kafka.getFirstMappedPort());
     }
 
     @BeforeEach
@@ -73,6 +71,8 @@ class OrderServiceControllerTest {
         Order order = new Order();
         order.setStatus(status);
         order.setUserId(userId);
+        order.setDeparture("from");
+        order.setArrival("to");
         return order;
     }
 
@@ -81,7 +81,9 @@ class OrderServiceControllerTest {
     @SneakyThrows
     public void createOrder() {
         CreateOrderDTO createDTO = new CreateOrderDTO();
-        createDTO.setUserId(1L);
+        createDTO.setClientId(1L);
+        createDTO.setDeparture("from");
+        createDTO.setArrival("to");
         String body = mapper.writeValueAsString(createDTO);
         MvcResult mvcResult = mockMvc.perform(post("/order/create")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -91,8 +93,10 @@ class OrderServiceControllerTest {
         OrderMsgDTO orderMsgDTO = mapper.readValue(mvcResult.getResponse().getContentAsString(), OrderMsgDTO.class);
         assertNotNull(orderMsgDTO.getId());
         assertEquals(LocalDate.now(), orderMsgDTO.getLocalDateTime().toLocalDate());
-        assertEquals(createDTO.getUserId(), orderMsgDTO.getUserId());
+        assertEquals(createDTO.getClientId(), orderMsgDTO.getUserId());
         assertEquals(OrderStatus.CREATED, orderMsgDTO.getStatus());
+        assertEquals(createDTO.getDeparture(), orderMsgDTO.getDeparture());
+        assertEquals(createDTO.getArrival(), orderMsgDTO.getArrival());
         assertNull(orderMsgDTO.getDriver());
     }
 
@@ -116,6 +120,8 @@ class OrderServiceControllerTest {
         assertEquals(LocalDate.now(), orderMsgDTO.getLocalDateTime().toLocalDate());
         assertEquals(updateDTO.getOrderId(), orderMsgDTO.getId());
         assertEquals(1L, orderMsgDTO.getUserId());
+        assertEquals(saved.getDeparture(), orderMsgDTO.getDeparture());
+        assertEquals(saved.getArrival(), orderMsgDTO.getArrival());
         assertEquals(OrderStatus.ASSIGNED, orderMsgDTO.getStatus());
         assertEquals(updateDTO.getDriver(), orderMsgDTO.getDriver());
     }
@@ -129,10 +135,12 @@ class OrderServiceControllerTest {
         MvcResult mvcResult = mockMvc.perform(get("/order/unassigned"))
                 .andExpect(status().isOk())
                 .andReturn();
-        List<OrderIdDto> orderIdDtos = mapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
+        List<UnassignedOrderDto> unassignedOrderDtos = mapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
         });
-        assertEquals(1, orderIdDtos.size());
-        assertEquals(saved.getId(), orderIdDtos.get(0).getId());
+        assertEquals(1, unassignedOrderDtos.size());
+        assertEquals(saved.getId(), unassignedOrderDtos.get(0).getId());
+        assertEquals(saved.getDeparture(), unassignedOrderDtos.get(0).getDeparture());
+        assertEquals(saved.getArrival(), unassignedOrderDtos.get(0).getArrival());
     }
 
     @Test
@@ -145,7 +153,7 @@ class OrderServiceControllerTest {
         MvcResult mvcResult = mockMvc.perform(get("/order/unassigned"))
                 .andExpect(status().isOk())
                 .andReturn();
-        List<OrderIdDto> orderIdDtos = mapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
+        List<UnassignedOrderDto> orderIdDtos = mapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
         });
         assertTrue(orderIdDtos.isEmpty());
     }

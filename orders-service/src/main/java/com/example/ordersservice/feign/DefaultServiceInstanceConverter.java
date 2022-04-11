@@ -20,7 +20,7 @@ public class DefaultServiceInstanceConverter implements Converter<String, List<D
             throw new IllegalArgumentException();
         }
         List<DefaultServiceInstance> instances = new ArrayList<>();
-        instances.add(new DefaultServiceInstance(data[0], data[1], data[2], Integer.parseInt(data[3]), true));
+        instances.add(new DefaultServiceInstance(data[0], data[1], data[2], Integer.parseInt(data[3]), false));
         return instances;
     }
 }

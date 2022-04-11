@@ -48,6 +48,9 @@ services:
       - 8080
     ports:
       - "8080:8080"
+      - "5005:5005"
+    environment:
+      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     depends_on:
       - clientsdb
       - orders-service
@@ -77,11 +80,13 @@ services:
       - 8081
     ports:
       - "8081:8081"
+      - "5006:5006"
     depends_on:
       - orders-db
       - kafka
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
   orders-db:
     image: postgres
     environment:

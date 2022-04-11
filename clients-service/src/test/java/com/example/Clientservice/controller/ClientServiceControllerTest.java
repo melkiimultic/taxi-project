@@ -8,7 +8,6 @@ import com.example.Clientservice.dto.OrderMsgDTO;
 import com.example.Clientservice.feign.OrderServiceClient;
 import com.example.Clientservice.repo.ClientsRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,35 +54,51 @@ class ClientServiceControllerTest {
 
     @BeforeEach
     @AfterEach
-    public void cleanDB(){
+    public void cleanDB() {
         clients.deleteAll();
     }
 
     @Test
     @DisplayName("Create user happy path")
     @SneakyThrows
-    public void createUser(){
+    public void createUser() {
         String body = ResourceConverter.getString(new ClassPathResource("requests/createUser.json"));
         mockMvc.perform(post("/client/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isOk());
 
-        template.executeWithoutResult(tr->{
+        template.executeWithoutResult(tr -> {
             Optional<Client> user = clients.findOneByUsername("test");
             assertTrue(user.isPresent());
             Client client = user.get();
-            assertEquals("First",client.getFirstName());
+            assertEquals("First", client.getFirstName());
             assertEquals("Last", client.getLastName());
-            assertEquals("79031112233",client.getPhoneNumber());
-            assertTrue(encoder.matches("test1",client.getPassword()));
+            assertEquals("79031112233", client.getPhoneNumber());
+            assertTrue(encoder.matches("test1", client.getPassword()));
+        });
+    }
+
+    @Test
+    @DisplayName("Create user without password")
+    @SneakyThrows
+    public void createUserWithoutPassword() {
+        String body = ResourceConverter.getString(new ClassPathResource("requests/createInvalidPasswordUser.json"));
+        mockMvc.perform(post("/client/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest());
+
+        template.executeWithoutResult(tr -> {
+            Optional<Client> user = clients.findOneByUsername("test");
+            assertFalse(user.isPresent());
         });
     }
 
     @Test
     @DisplayName("Try to create existing user")
     @SneakyThrows
-    public void createExistingUser(){
+    public void createExistingUser() {
         Client user = new Client();
         user.setUsername("test");
         user.setPassword(encoder.encode("test1"));
@@ -99,13 +114,13 @@ class ClientServiceControllerTest {
                 .andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();
         assertEquals("User with username " + user.getUsername() +
-                " already exists",contentAsString);
+                " already exists", contentAsString);
     }
 
     @Test
     @DisplayName("Create an order happy path")
     @SneakyThrows
-    public void createAnOrder(){
+    public void createAnOrder() {
         final AtomicReference<Long> userId = new AtomicReference<>();
         template.executeWithoutResult(tr -> {
             Client user = new Client();
@@ -120,15 +135,19 @@ class ClientServiceControllerTest {
 
         CreateOrderDTO dto = new CreateOrderDTO();
         dto.setClientId(userId.get());
+        dto.setDeparture("from");
+        dto.setArrival("to");
         String body = mapper.writeValueAsString(dto);
 
         OrderMsgDTO msg = new OrderMsgDTO();
         msg.setId(1L);
         msg.setStatus(OrderStatus.CREATED);
         msg.setUserId(userId.get());
+        msg.setDeparture("from");
+        msg.setArrival("to");
         LocalDate date = LocalDate.of(2021, 11, 16);
         LocalTime time = LocalTime.of(12, 12);
-        msg.setLocalDateTime(LocalDateTime.of(date,time));
+        msg.setLocalDateTime(LocalDateTime.of(date, time));
 
         when(orderServiceClient.createOrder(dto)).thenReturn(msg);
 
@@ -138,15 +157,17 @@ class ClientServiceControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         OrderMsgDTO response = mapper.readValue(mvcResult.getResponse().getContentAsString(), OrderMsgDTO.class);
-        assertTrue(response.equals(msg));
+        assertEquals(response, msg);
     }
 
     @Test
     @DisplayName("Create an order if user isn't in DB")
     @SneakyThrows
-    public void createOrderByUnsignedUser(){
+    public void createOrderByUnsignedUser() {
         CreateOrderDTO dto = new CreateOrderDTO();
         dto.setClientId(-1L);
+        dto.setDeparture("from");
+        dto.setArrival("to");
         String body = mapper.writeValueAsString(dto);
         MvcResult mvcResult = mockMvc.perform(post("/client/createOrder")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -154,10 +175,7 @@ class ClientServiceControllerTest {
                 .andExpect(status().isNotFound())
                 .andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();
-        assertEquals("Sign up to create an order",contentAsString);
+        assertEquals("Sign up to create an order", contentAsString);
     }
-
-
-
 
 }

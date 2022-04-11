@@ -9,6 +9,7 @@ import com.example.ordersservice.dto.UpdateOrderDTO;
 import com.example.ordersservice.mapper.OrderDtoMapper;
 import com.example.ordersservice.repo.OrderRepo;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.junit.Ignore;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,17 +30,19 @@ import java.util.logging.Logger;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+//here
 @SpringBootTest
 @Import(KafkaTestContainersConfiguration.class)
 public class KafkaProducerTest {
     @Autowired
     private OrderService orderService;
-    @MockBean
+    @Autowired
     private OrderRepo orderRepo;
-    @MockBean
+    @Autowired
     private OrderDtoMapper orderDtoMapper;
 
     //List should be static for working in multiple tests
@@ -79,61 +82,49 @@ public class KafkaProducerTest {
     public void createdOrderWasSentToKafka() {
 
         CreateOrderDTO createDTO = new CreateOrderDTO();
-        createDTO.setUserId(1L);
+        createDTO.setClientId(1L);
+        createDTO.setDeparture("From");
+        createDTO.setArrival("To");
 
-        OrderMsgDTO msgDTO = new OrderMsgDTO();
-        msgDTO.setId(1L);
-        msgDTO.setStatus(OrderStatus.CREATED);
-        msgDTO.setUserId(createDTO.getUserId());
-        LocalDateTime now = LocalDateTime.now();
-        msgDTO.setLocalDateTime(now);
-        com.example.ordersservice.domain.Order order = new com.example.ordersservice.domain.Order();
-        order.setUserId(1L);
-        order.setStatus(OrderStatus.CREATED);
-        when(orderRepo.save(order)).thenReturn(order);
-        when(orderDtoMapper.toOrderMsgDTO(any(Order.class))).thenReturn(msgDTO);
-
-        orderService.createOrder(createDTO);
+        OrderMsgDTO after = orderService.createOrder(createDTO);
 
         await().atMost(10, TimeUnit.SECONDS)
                 .until(() -> !records.isEmpty());
         assertEquals(1, records.size());
         ConsumerRecord<String, OrderMsgDTO> recordsEntry = records.get(0);
-        assertEquals(String.valueOf(msgDTO.getId()), recordsEntry.key());
+        assertEquals(String.valueOf(after.getId()), recordsEntry.key());
         OrderMsgDTO fromKafka = recordsEntry.value();
-        assertEquals(msgDTO, fromKafka);
+        assertEquals(after.getId(), fromKafka.getId());
+        assertEquals(createDTO.getArrival(),fromKafka.getArrival());
+        assertEquals(createDTO.getDeparture(),fromKafka.getDeparture());
+        assertEquals(OrderStatus.CREATED,fromKafka.getStatus());
+        assertEquals(createDTO.getClientId(),fromKafka.getUserId());
 
     }
 
     @Test
     @DisplayName("Updated order was sent to kafka")
     public void updatedOrderWasSentToKafka() {
-        UpdateOrderDTO updateDTO = new UpdateOrderDTO();
-        updateDTO.setOrderId(1L);
-        updateDTO.setStatus(OrderStatus.ASSIGNED);
-        updateDTO.setDriver("test");
+
         com.example.ordersservice.domain.Order order = new com.example.ordersservice.domain.Order();
         order.setUserId(1L);
         order.setStatus(OrderStatus.CREATED);
-        order.setId(1L);
+        order.setArrival("to");
+        order.setDeparture("from");
+        Order saved = orderRepo.saveAndFlush(order);
 
-        Order updated = new Order();
-        updated.setId(updateDTO.getOrderId());
-        updated.setDriver(updateDTO.getDriver());
-        updated.setStatus(updateDTO.getStatus());
-        updated.setUserId(order.getUserId());
+        UpdateOrderDTO updateDTO = new UpdateOrderDTO();
+        updateDTO.setOrderId(saved.getId());
+        updateDTO.setStatus(OrderStatus.ASSIGNED);
+        updateDTO.setDriver("test");
 
         OrderMsgDTO msgDTO = new OrderMsgDTO();
-        msgDTO.setId(updated.getId());
-        msgDTO.setStatus(updated.getStatus());
-        msgDTO.setUserId(updated.getUserId());
-        msgDTO.setDriver(updated.getDriver());
-        LocalDateTime now = LocalDateTime.now();
-        msgDTO.setLocalDateTime(now);
-
-        when(orderRepo.findById(updateDTO.getOrderId())).thenReturn(Optional.of(order));
-        when(orderRepo.save(updated)).thenReturn(updated);
-        when(orderDtoMapper.toOrderMsgDTO(any(Order.class))).thenReturn(msgDTO);
+        msgDTO.setId(updateDTO.getOrderId());
+        msgDTO.setStatus(updateDTO.getStatus());
+        msgDTO.setUserId(order.getUserId());
+        msgDTO.setDriver(updateDTO.getDriver());
+        msgDTO.setArrival(order.getArrival());
+        msgDTO.setDeparture(order.getDeparture());
 
         orderService.updateOrder(updateDTO);
 
@@ -144,8 +135,12 @@ public class KafkaProducerTest {
         ConsumerRecord<String, OrderMsgDTO> recordsEntry = records.get(0);
         assertEquals(String.valueOf(msgDTO.getId()), recordsEntry.key());
         OrderMsgDTO fromKafka = recordsEntry.value();
-        assertEquals(msgDTO, fromKafka);
-
+        assertEquals(msgDTO.getId(), fromKafka.getId());
+        assertEquals(msgDTO.getArrival(),fromKafka.getArrival());
+        assertEquals(msgDTO.getDeparture(),fromKafka.getDeparture());
+        assertEquals(msgDTO.getStatus(),fromKafka.getStatus());
+        assertEquals(msgDTO.getUserId(),fromKafka.getUserId());
+        assertEquals(msgDTO.getDriver(),fromKafka.getDriver());
     }
 
 }

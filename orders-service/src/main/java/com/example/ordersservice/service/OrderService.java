@@ -3,10 +3,9 @@ package com.example.ordersservice.service;
 import com.example.ordersservice.domain.Order;
 import com.example.ordersservice.domain.OrderStatus;
 import com.example.ordersservice.dto.CreateOrderDTO;
-import com.example.ordersservice.dto.OrderIdDto;
+import com.example.ordersservice.dto.UnassignedOrderDto;
 import com.example.ordersservice.dto.OrderMsgDTO;
 import com.example.ordersservice.dto.UpdateOrderDTO;
-import com.example.ordersservice.feign.ClientServiceClient;
 import com.example.ordersservice.mapper.OrderDtoMapper;
 import com.example.ordersservice.repo.OrderRepo;
 import lombok.RequiredArgsConstructor;
@@ -31,18 +30,20 @@ public class OrderService {
     public OrderMsgDTO createOrder(CreateOrderDTO createOrderDTO) {
         Order order = new Order();
         order.setStatus(OrderStatus.CREATED);
-        order.setUserId(createOrderDTO.getUserId());
-        orderRepo.save(order);
+        order.setUserId(createOrderDTO.getClientId());
+        order.setDeparture(createOrderDTO.getDeparture());
+        order.setArrival(createOrderDTO.getArrival());
+        Order saved = orderRepo.save(order); // TODO check saved
 
         //when order has been created send msg to kafka    TODO if smth goes wrong at 1st or 2nd step?
-        OrderMsgDTO orderMsgDTO = orderDtoMapper.toOrderMsgDTO(order);
+        OrderMsgDTO orderMsgDTO = orderDtoMapper.toOrderMsgDTO(saved);
         orderMsgDTO.setLocalDateTime(LocalDateTime.now());
         producerService.sendMessage(orderMsgDTO);
         return orderMsgDTO;
     }
 
     @Transactional
-    public List<OrderIdDto> getUnassigned() {
+    public List<UnassignedOrderDto> getUnassigned() {
         List<Order> unassigned = orderRepo.findByStatus(OrderStatus.CREATED);
         return unassigned.stream().map(orderDtoMapper::toOrderIdDTO).collect(Collectors.toList());
     }

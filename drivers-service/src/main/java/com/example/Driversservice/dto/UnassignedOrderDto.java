@@ -1,4 +1,4 @@
-package com.example.ordersservice.dto;
+package com.example.Driversservice.dto;
 
 import lombok.Data;
 
@@ -6,10 +6,10 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class CreateOrderDTO {
+public class UnassignedOrderDto {
 
     @NotNull
-    private Long clientId;
+    private Long id;
 
     @NotEmpty
     private String departure;

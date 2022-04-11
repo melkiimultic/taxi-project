@@ -51,9 +51,7 @@ class OrderServiceBDTest {
 
     @DynamicPropertySource
     static void kafkaProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", () -> {
-            return kafka.getHost() + ":" + kafka.getFirstMappedPort();
-        });
+        registry.add("spring.kafka.bootstrap-servers", () -> kafka.getHost() + ":" + kafka.getFirstMappedPort());
     }
 
     @BeforeEach
@@ -66,6 +64,8 @@ class OrderServiceBDTest {
         Order order = new Order();
         order.setStatus(status);
         order.setUserId(userId);
+        order.setDeparture("from");
+        order.setArrival("to");
         return order;
     }
 
@@ -73,18 +73,22 @@ class OrderServiceBDTest {
     @DisplayName("Created order was saved to db")
     public void createdOrderWasSaved() {
         CreateOrderDTO createDTO = new CreateOrderDTO();
-        createDTO.setUserId(1L);
+        createDTO.setClientId(1L);
+        createDTO.setDeparture("from");
+        createDTO.setArrival("to");
         doNothing().when(producerService).sendMessage(any(OrderMsgDTO.class));
 
-        orderService.createOrder(createDTO);
+        OrderMsgDTO orderMsgDTO = orderService.createOrder(createDTO);
 
-        Optional<Order> byId = orderRepo.findById(1L);
+        Optional<Order> byId = orderRepo.findById(orderMsgDTO.getId());
         assertTrue(byId.isPresent());
         Order saved = byId.get();
-        assertEquals(1L, saved.getId());
+        assertEquals(orderMsgDTO.getId(), saved.getId());
         assertEquals(OrderStatus.CREATED, saved.getStatus());
         assertNull(saved.getDriver());
-        assertEquals(createDTO.getUserId(), saved.getUserId());
+        assertEquals(createDTO.getClientId(), saved.getUserId());
+        assertEquals(createDTO.getArrival(), saved.getArrival());
+        assertEquals(createDTO.getDeparture(), saved.getDeparture());
     }
 
     @Test
@@ -98,15 +102,17 @@ class OrderServiceBDTest {
         updateDTO.setDriver("test");
         doNothing().when(producerService).sendMessage(any(OrderMsgDTO.class));
 
-        orderService.updateOrder(updateDTO);
+         orderService.updateOrder(updateDTO);
 
-        Optional<Order> byId = orderRepo.findById(1L);
+        Optional<Order> byId = orderRepo.findById(saved.getId());
         assertTrue(byId.isPresent());
         Order fromBD = byId.get();
         assertEquals(saved.getId(), fromBD.getId());
         assertEquals(OrderStatus.ASSIGNED, fromBD.getStatus());
         assertEquals("test", fromBD.getDriver());
-        assertEquals(saved.getUserId(), saved.getUserId());
+        assertEquals(saved.getUserId(), fromBD.getUserId());
+        assertEquals(saved.getDeparture(), fromBD.getDeparture());
+        assertEquals(saved.getArrival(), fromBD.getArrival());
     }
 
     @Test

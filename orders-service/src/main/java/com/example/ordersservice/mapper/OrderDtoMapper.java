@@ -1,7 +1,7 @@
 package com.example.ordersservice.mapper;
 
 import com.example.ordersservice.domain.Order;
-import com.example.ordersservice.dto.OrderIdDto;
+import com.example.ordersservice.dto.UnassignedOrderDto;
 import com.example.ordersservice.dto.OrderMsgDTO;
 import org.mapstruct.Mapper;
 
@@ -10,5 +10,5 @@ public interface OrderDtoMapper {
 
     OrderMsgDTO toOrderMsgDTO(Order order);
 
-    OrderIdDto toOrderIdDTO(Order order);
+    UnassignedOrderDto toOrderIdDTO(Order order);
 }

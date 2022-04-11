@@ -57,9 +57,7 @@ class HistoryServiceControllerTest {
 
     @DynamicPropertySource
     static void kafkaProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", () -> {
-            return kafka.getHost() + ":" + kafka.getFirstMappedPort();
-        });
+        registry.add("spring.kafka.bootstrap-servers", () -> kafka.getHost() + ":" + kafka.getFirstMappedPort());
     }
 
     @BeforeEach
@@ -74,6 +72,8 @@ class HistoryServiceControllerTest {
         entry.setStatus(status);
         entry.setUserId(userId);
         entry.setDriver(driver);
+        entry.setDeparture("from");
+        entry.setArrival("to");
         entry.setLocalDateTime(dateTime);
         return entry;
     }

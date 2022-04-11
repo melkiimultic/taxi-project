@@ -17,17 +17,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HistoryService {
 
-   private final HistoryEntryRepo historyEntryRepo;
-   private final EntryDtoMapper entryDtoMapper;
+    private final HistoryEntryRepo historyEntryRepo;
+    private final EntryDtoMapper entryDtoMapper;
 
-   @Transactional
-   public List<OrderMsgDTO> getOrderHistory(Long orderId) {
-      List<HistoryEntry> entries = historyEntryRepo.findAllByOrderId(orderId);
-      if(entries.isEmpty()){
-         throw new EntityNotFoundException("Order №"+orderId+" doesn't exist");
-      }
-      return entries.stream().map(entryDtoMapper::toDTO)
-              .sorted(Comparator.comparing(OrderMsgDTO::getLocalDateTime)).collect(Collectors.toList());
-
-   }
+    @Transactional
+    public List<OrderMsgDTO> getOrderHistory(Long orderId) {
+        List<HistoryEntry> entries = historyEntryRepo.findAllByOrderId(orderId);
+        if (entries.isEmpty()) {
+            throw new EntityNotFoundException("Order №" + orderId + " doesn't exist");
+        }
+        return entries.stream().map(entryDtoMapper::toDTO)
+                .sorted(Comparator.comparing(OrderMsgDTO::getLocalDateTime)).collect(Collectors.toList());
+    }
 }
