@@ -27,7 +27,6 @@ public class KafkaConsumerConfig {
     private String bootstrapAddress;
     @Value(value ="${spring.kafka.consumer.group-id:''}")
     private String groupId;
-    private String topic = "orderHistory";
 
     @Bean
     public ConsumerFactory<String, OrderMsgDTO> consumerFactory() {
@@ -43,11 +42,11 @@ public class KafkaConsumerConfig {
                 StringDeserializer.class);
         props.put(
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-                JsonDeserializer.class);
+                KafkaCustomDeserializer.class);
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
-        props.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, JsonDeserializer.class);
-        props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
+        props.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class);
+        props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS,KafkaCustomDeserializer.class);
         props.put(JsonDeserializer.TRUSTED_PACKAGES , "*");
         return new DefaultKafkaConsumerFactory<>(props);
     }
@@ -62,8 +61,15 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
+    public KafkaAdmin kafkaAdmin() {
+        Map<String, Object> configs = new HashMap<>();
+        configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        return new KafkaAdmin(configs);
+    }
+
+    @Bean
     public NewTopic orderHistory() {
-        return new NewTopic(topic, 3, (short) 1);
+        return new NewTopic("orderHistory", 3, (short) 1);
     }
 
 }

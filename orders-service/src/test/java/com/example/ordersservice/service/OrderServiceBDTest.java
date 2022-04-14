@@ -123,9 +123,36 @@ class OrderServiceBDTest {
         updateDTO.setStatus(OrderStatus.ASSIGNED);
         updateDTO.setDriver("test");
 
-        assertThrows(EntityNotFoundException.class, () -> orderService.updateOrder(updateDTO));
+        EntityNotFoundException entityNotFoundException = assertThrows(EntityNotFoundException.class, () -> orderService.updateOrder(updateDTO));
+        assertEquals("Wrong order identifier!", entityNotFoundException.getMessage());
 
     }
+
+    @Test
+    @DisplayName("Can't update order status to CREATED")
+    public void updateToCreated(){
+        Order order = createUnassignedOrder(OrderStatus.CREATED, 1L);
+        Order saved = orderRepo.saveAndFlush(order);
+        UpdateOrderDTO updateDTO = new UpdateOrderDTO();
+        updateDTO.setOrderId(saved.getId());
+        updateDTO.setStatus(OrderStatus.CREATED);
+        updateDTO.setDriver("test");
+        assertThrows(IllegalArgumentException.class, () -> orderService.updateOrder(updateDTO));
+    }
+
+    @Test
+    @DisplayName("Can't update closed order")
+    public void updateClosedOrder(){
+        Order order = createUnassignedOrder(OrderStatus.CLOSED, 1L);
+        Order saved = orderRepo.saveAndFlush(order);
+        UpdateOrderDTO updateDTO = new UpdateOrderDTO();
+        updateDTO.setOrderId(saved.getId());
+        updateDTO.setStatus(OrderStatus.CLOSED);
+        updateDTO.setDriver("test");
+        assertThrows(IllegalArgumentException.class, () -> orderService.updateOrder(updateDTO));
+
+    }
+
 
 
 }

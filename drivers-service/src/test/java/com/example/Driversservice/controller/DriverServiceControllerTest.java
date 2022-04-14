@@ -118,7 +118,7 @@ class DriverServiceControllerTest {
     @SneakyThrows
     public void updateOrderByUnsignedDriver() {
         UpdateOrderDTO updateOrderDTO = new UpdateOrderDTO();
-        updateOrderDTO.setUsername("test");
+        updateOrderDTO.setDriver("test");
         updateOrderDTO.setOrderId(1L);
         updateOrderDTO.setStatus(OrderStatus.ASSIGNED);
         String body = mapper.writeValueAsString(updateOrderDTO);
@@ -130,7 +130,7 @@ class DriverServiceControllerTest {
                 .andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();
 
-        assertEquals("Driver with username " + updateOrderDTO.getUsername() +
+        assertEquals("Driver with username " + updateOrderDTO.getDriver() +
                 " doesn't exist", contentAsString);
     }
 
@@ -147,7 +147,7 @@ class DriverServiceControllerTest {
         driversRepo.saveAndFlush(driver);
 
         UpdateOrderDTO updateOrderDTO = new UpdateOrderDTO();
-        updateOrderDTO.setUsername("test");
+        updateOrderDTO.setDriver("test");
         updateOrderDTO.setOrderId(1L);
         updateOrderDTO.setStatus(OrderStatus.ASSIGNED);
         String body = mapper.writeValueAsString(updateOrderDTO);

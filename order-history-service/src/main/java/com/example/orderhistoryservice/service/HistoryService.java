@@ -29,4 +29,5 @@ public class HistoryService {
         return entries.stream().map(entryDtoMapper::toDTO)
                 .sorted(Comparator.comparing(OrderMsgDTO::getLocalDateTime)).collect(Collectors.toList());
     }
+
 }

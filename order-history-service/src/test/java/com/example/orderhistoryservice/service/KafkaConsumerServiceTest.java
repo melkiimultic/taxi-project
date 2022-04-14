@@ -6,7 +6,9 @@ import com.example.orderhistoryservice.domain.OrderStatus;
 import com.example.orderhistoryservice.dto.OrderMsgDTO;
 import com.example.orderhistoryservice.mapper.EntryDtoMapper;
 import com.example.orderhistoryservice.repo.HistoryEntryRepo;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.*;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +26,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 @Import(KafkaTestContainersConfiguration.class)
@@ -75,6 +78,7 @@ public class KafkaConsumerServiceTest {
         return dto;
     }
 
+
     @Test
     @DisplayName("Read by Kafka message was saved to DB")
     public void sentMsgWasSaved() {
@@ -83,7 +87,6 @@ public class KafkaConsumerServiceTest {
         LocalTime time = LocalTime.of(12, 12);
         LocalDateTime localDateTime = LocalDateTime.of(date, time);
         OrderMsgDTO dto = createOrderMsgDTO(1L, OrderStatus.CREATED, 1L, "test", localDateTime);
-
         kafkaTemplate.send(topic, String.valueOf(dto.getId()), dto);
         kafkaTemplate.flush();
         await().atMost(10, TimeUnit.SECONDS)
@@ -93,5 +96,6 @@ public class KafkaConsumerServiceTest {
         OrderMsgDTO dtoFromDB = dtoMapper.toDTO(entries.get(0));
         assertEquals(dto, dtoFromDB);
     }
+
 
 }

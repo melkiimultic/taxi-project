@@ -5,7 +5,6 @@ import com.example.Clientservice.dto.CreateOrderDTO;
 import com.example.Clientservice.dto.OrderMsgDTO;
 import com.example.Clientservice.service.ClientService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;

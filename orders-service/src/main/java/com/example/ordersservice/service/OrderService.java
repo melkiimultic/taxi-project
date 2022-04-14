@@ -3,8 +3,8 @@ package com.example.ordersservice.service;
 import com.example.ordersservice.domain.Order;
 import com.example.ordersservice.domain.OrderStatus;
 import com.example.ordersservice.dto.CreateOrderDTO;
-import com.example.ordersservice.dto.UnassignedOrderDto;
 import com.example.ordersservice.dto.OrderMsgDTO;
+import com.example.ordersservice.dto.UnassignedOrderDto;
 import com.example.ordersservice.dto.UpdateOrderDTO;
 import com.example.ordersservice.mapper.OrderDtoMapper;
 import com.example.ordersservice.repo.OrderRepo;
@@ -33,9 +33,9 @@ public class OrderService {
         order.setUserId(createOrderDTO.getClientId());
         order.setDeparture(createOrderDTO.getDeparture());
         order.setArrival(createOrderDTO.getArrival());
-        Order saved = orderRepo.save(order); // TODO check saved
+        Order saved = orderRepo.save(order);
 
-        //when order has been created send msg to kafka    TODO if smth goes wrong at 1st or 2nd step?
+        //when order has been created send msg to kafka
         OrderMsgDTO orderMsgDTO = orderDtoMapper.toOrderMsgDTO(saved);
         orderMsgDTO.setLocalDateTime(LocalDateTime.now());
         producerService.sendMessage(orderMsgDTO);
@@ -44,7 +44,7 @@ public class OrderService {
 
     @Transactional
     public List<UnassignedOrderDto> getUnassigned() {
-        List<Order> unassigned = orderRepo.findByStatus(OrderStatus.CREATED);
+        List<Order> unassigned = orderRepo.findByStatusAndDriverIsNull(OrderStatus.CREATED);
         return unassigned.stream().map(orderDtoMapper::toOrderIdDTO).collect(Collectors.toList());
     }
 
@@ -52,12 +52,16 @@ public class OrderService {
     public OrderMsgDTO updateOrder(UpdateOrderDTO updateOrderDTO) {
         Optional<Order> orderOpt = orderRepo.findById(updateOrderDTO.getOrderId());
         if (orderOpt.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException("Wrong order identifier!");
+        }
+        Order order = orderOpt.get();
+        if (OrderStatus.CLOSED.equals(order.getStatus()) ||
+                !OrderStatus.next(order.getStatus()).equals(updateOrderDTO.getStatus())) {
+            throw new IllegalArgumentException();
         }
         //update fields in DB
-        Order order = orderOpt.get();
+        order.setStatus(updateOrderDTO.getStatus());
         order.setDriver(updateOrderDTO.getDriver());
-        order.setStatus(updateOrderDTO.getStatus()); //TODO sequence of statuses check?
         orderRepo.save(order);
 
         //when order has been updated send msg to kafka

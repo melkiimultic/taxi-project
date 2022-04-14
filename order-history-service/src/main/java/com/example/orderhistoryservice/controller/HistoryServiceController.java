@@ -22,5 +22,4 @@ public class HistoryServiceController {
         return historyService.getOrderHistory(orderId);
     }
 
-
 }

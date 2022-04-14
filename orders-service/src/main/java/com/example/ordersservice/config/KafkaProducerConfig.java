@@ -23,9 +23,11 @@ public class KafkaProducerConfig {
     @Bean
     public ProducerFactory<String, OrderMsgDTO> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
-        configProps.put(
-                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                bootstrapAddress);
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        configProps.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, 15000);
+        configProps.put(ProducerConfig.LINGER_MS_CONFIG, 10);
+        configProps.put(ProducerConfig.BATCH_SIZE_CONFIG,10000);
+        configProps.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG,10000);
         configProps.put(
                 ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class);

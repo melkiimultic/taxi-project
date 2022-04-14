@@ -16,7 +16,7 @@ import java.util.List;
 public interface OrderServiceClient {
 
     @PostMapping(value = "/order/update")
-    OrderMsgDTO updateOrder ( @RequestBody UpdateOrderDTO updateOrderDTO);
+    OrderMsgDTO updateOrder (@RequestBody UpdateOrderDTO updateOrderDTO);
 
     @GetMapping(value = "/order/unassigned")
     List<UnassignedOrderDto> getUnassigned();

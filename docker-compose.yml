@@ -26,6 +26,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092,OUTSIDE://_{HOSTNAME_COMMAND}:9094
       KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      LOG4J_LOGGER_KAFKA_AUTHORIZER_LOGGER: DEBUG
 
   clientsdb:
     image: postgres:14
@@ -61,10 +62,13 @@ services:
       - 8082
     ports:
       - "8082:8082"
+      - "5003:5003"
     depends_on:
       - drivers-db
       - orders-service
       - order-history-service
+    environment:
+      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5003
   drivers-db:
     image: postgres
     environment:
@@ -102,11 +106,13 @@ services:
       - 8083
     ports:
       - "8083:8083"
+      - "5004:5004"
     depends_on:
       - order-history-db
       - kafka
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5004
   order-history-db:
     image: postgres
     environment:

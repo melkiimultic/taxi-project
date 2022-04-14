@@ -8,4 +8,13 @@ public enum OrderStatus {
     OrderStatus(String status) {
         this.status = status;
     }
+
+    public static OrderStatus next(OrderStatus status) {
+        if (OrderStatus.CREATED.equals(status)) {
+            return OrderStatus.ASSIGNED;
+        } else if (OrderStatus.ASSIGNED.equals(status)) {
+            return OrderStatus.INPROGRESS;
+        } else
+            return OrderStatus.CLOSED;
+    }
 }

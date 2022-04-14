@@ -43,8 +43,8 @@ public class DriverService {
 
 
     public OrderMsgDTO updateOrder(UpdateOrderDTO updateOrderDTO) {
-        if (!driversRepo.existsByUsername(updateOrderDTO.getUsername())) {
-            throw new EntityNotFoundException("Driver with username " + updateOrderDTO.getUsername() +
+        if (!driversRepo.existsByUsername(updateOrderDTO.getDriver())) {
+            throw new EntityNotFoundException("Driver with username " + updateOrderDTO.getDriver() +
                     " doesn't exist");
         }
         //if driver exists, delegate to OrdersServiceApp
@@ -53,7 +53,6 @@ public class DriverService {
     }
 
     public List<OrderMsgDTO> getOrderHistory(Long orderId) {
-        //just delegate to HistoryService
         return orderHistoryServiceClient.getOrderHistory(orderId);
     }
 }

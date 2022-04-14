@@ -19,7 +19,6 @@ public class OrderMsgDTO {
     @NotNull
     private Long userId;
 
-    @NotEmpty
     private String driver;
 
     @NotEmpty

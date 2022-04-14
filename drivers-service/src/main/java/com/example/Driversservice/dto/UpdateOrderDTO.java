@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 public class UpdateOrderDTO {
 
     @NotEmpty
-    private String username;
+    private String driver; //driver's username
 
     @NotNull
     private Long orderId;
