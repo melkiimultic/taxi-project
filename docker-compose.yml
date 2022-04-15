@@ -84,13 +84,13 @@ services:
       - 8081
     ports:
       - "8081:8081"
-      - "5006:5006"
+      - "5007:5007"
     depends_on:
       - orders-db
       - kafka
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007
   orders-db:
     image: postgres
     environment:

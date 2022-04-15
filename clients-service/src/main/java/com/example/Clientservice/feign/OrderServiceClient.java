@@ -11,7 +11,7 @@ import javax.validation.Valid;
 @FeignClient(name = "orders-service")
 public interface OrderServiceClient {
 
-    @PostMapping(value = "/order/create")
+    @PostMapping(value = "/order")
     OrderMsgDTO createOrder( @RequestBody CreateOrderDTO createOrderDTO);
 
 }

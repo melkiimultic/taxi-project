@@ -85,7 +85,7 @@ class OrderServiceControllerTest {
         createDTO.setDeparture("from");
         createDTO.setArrival("to");
         String body = mapper.writeValueAsString(createDTO);
-        MvcResult mvcResult = mockMvc.perform(post("/order/create")
+        MvcResult mvcResult = mockMvc.perform(post("/order")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isOk())

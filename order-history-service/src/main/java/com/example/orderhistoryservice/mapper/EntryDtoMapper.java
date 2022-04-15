@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface EntryDtoMapper {
     @Mapping( target = "orderId", source = "id")
+    @Mapping(target = "id", ignore = true)
     HistoryEntry fromDTO(OrderMsgDTO orderMsgDTO);
 
     @Mapping( target = "id", source = "orderId")

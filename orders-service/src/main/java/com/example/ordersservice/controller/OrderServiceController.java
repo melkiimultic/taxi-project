@@ -18,7 +18,7 @@ public class OrderServiceController {
 
     private final OrderService orderService;
 
-    @PostMapping(value = "/create")
+    @PostMapping()
     public OrderMsgDTO createOrder(@Valid  @RequestBody CreateOrderDTO createOrderDTO) {
         return orderService.createOrder(createOrderDTO);
     }

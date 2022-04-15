@@ -63,7 +63,7 @@ class ClientServiceControllerTest {
     @SneakyThrows
     public void createUser() {
         String body = ResourceConverter.getString(new ClassPathResource("requests/createUser.json"));
-        mockMvc.perform(post("/client/create")
+        mockMvc.perform(post("/client")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isOk());
@@ -84,7 +84,7 @@ class ClientServiceControllerTest {
     @SneakyThrows
     public void createUserWithoutPassword() {
         String body = ResourceConverter.getString(new ClassPathResource("requests/createInvalidPasswordUser.json"));
-        mockMvc.perform(post("/client/create")
+        mockMvc.perform(post("/client")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest());
@@ -107,7 +107,7 @@ class ClientServiceControllerTest {
         user.setPhoneNumber("79031112233");
         clients.save(user);
         String body = ResourceConverter.getString(new ClassPathResource("requests/createUser.json"));
-        MvcResult mvcResult = mockMvc.perform(post("/client/create")
+        MvcResult mvcResult = mockMvc.perform(post("/client")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isConflict())
@@ -151,7 +151,7 @@ class ClientServiceControllerTest {
 
         when(orderServiceClient.createOrder(dto)).thenReturn(msg);
 
-        MvcResult mvcResult = mockMvc.perform(post("/client/createOrder")
+        MvcResult mvcResult = mockMvc.perform(post("/client/order")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isOk())
@@ -169,7 +169,7 @@ class ClientServiceControllerTest {
         dto.setDeparture("from");
         dto.setArrival("to");
         String body = mapper.writeValueAsString(dto);
-        MvcResult mvcResult = mockMvc.perform(post("/client/createOrder")
+        MvcResult mvcResult = mockMvc.perform(post("/client/order")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isNotFound())

@@ -20,10 +20,10 @@ public class DriverServiceController {
     private final DriverService driverService;
     private final OrderServiceClient orderServiceClient;
 
-    @PostMapping("/create")
+    @PostMapping()
     public Long createDriver(@Valid @RequestBody CreateDriverDTO createDriverDTO){ return driverService.createDriver(createDriverDTO);}
 
-    @PostMapping("/update")
+    @PostMapping("/order/update")
     public OrderMsgDTO updateOrder(@Valid @RequestBody UpdateOrderDTO updateOrderDTO){ return driverService.updateOrder(updateOrderDTO);}
 
     @GetMapping("/history/{orderId}")

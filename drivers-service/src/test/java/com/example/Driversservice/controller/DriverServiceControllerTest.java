@@ -73,7 +73,7 @@ class DriverServiceControllerTest {
     public void createDriver() {
         String body = ResourceConverter.getString(new ClassPathResource("requests/createDriver.json"));
 
-        mockMvc.perform(post("/driver/create")
+        mockMvc.perform(post("/driver")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isOk());
@@ -102,7 +102,7 @@ class DriverServiceControllerTest {
         driversRepo.saveAndFlush(user);
         String body = ResourceConverter.getString(new ClassPathResource("requests/createDriver.json"));
 
-        MvcResult mvcResult = mockMvc.perform(post("/driver/create")
+        MvcResult mvcResult = mockMvc.perform(post("/driver")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isConflict())
@@ -123,7 +123,7 @@ class DriverServiceControllerTest {
         updateOrderDTO.setStatus(OrderStatus.ASSIGNED);
         String body = mapper.writeValueAsString(updateOrderDTO);
 
-        MvcResult mvcResult = mockMvc.perform(post("/driver/update")
+        MvcResult mvcResult = mockMvc.perform(post("/driver/order/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isNotFound())
@@ -164,7 +164,7 @@ class DriverServiceControllerTest {
 
         when(orderServiceClient.updateOrder(updateOrderDTO)).thenReturn(orderMsg);
 
-        MvcResult mvcResult = mockMvc.perform(post("/driver/update")
+        MvcResult mvcResult = mockMvc.perform(post("/driver/order/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isOk())
