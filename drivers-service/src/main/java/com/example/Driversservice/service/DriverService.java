@@ -41,18 +41,19 @@ public class DriverService {
         return saved.getId();
     }
 
-
     public OrderMsgDTO updateOrder(UpdateOrderDTO updateOrderDTO) {
-        if (!driversRepo.existsByUsername(updateOrderDTO.getDriver())) {
-            throw new EntityNotFoundException("Driver with username " + updateOrderDTO.getDriver() +
-                    " doesn't exist");
-        }
-        //if driver exists, delegate to OrdersServiceApp
+        checkDriver(updateOrderDTO.getDriver());
         return orderServiceClient.updateOrder(updateOrderDTO);
-
     }
 
     public List<OrderMsgDTO> getOrderHistory(Long orderId) {
         return orderHistoryServiceClient.getOrderHistory(orderId);
+    }
+
+    public void checkDriver(String username) {
+        if (!driversRepo.existsByUsername(username)) {
+            throw new EntityNotFoundException("Driver with username " + username +
+                    " doesn't exist");
+        }
     }
 }
