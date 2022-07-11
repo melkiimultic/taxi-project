@@ -246,4 +246,17 @@ class DriverServiceControllerTest {
         });
         assertEquals(0, unassignedFromRes.size());
     }
+
+    @Test
+    @DisplayName("get all orders with wrong driver")
+    @SneakyThrows
+    public void getAllWrongDriver(){
+        String username = "test";
+        final MvcResult mvcResult = mockMvc.perform(get("/driver/orders").param("driver", username))
+                .andExpect(status().isNotFound())
+                .andReturn();
+        final String contentAsString = mvcResult.getResponse().getContentAsString();
+        assertEquals("Driver with username " + username +
+                " doesn't exist", contentAsString);
+    }
 }

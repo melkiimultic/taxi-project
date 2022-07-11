@@ -3,17 +3,20 @@ package com.example.ordersservice.service;
 import com.example.ordersservice.domain.Order;
 import com.example.ordersservice.domain.OrderStatus;
 import com.example.ordersservice.dto.CreateOrderDTO;
+import com.example.ordersservice.dto.OrderForDriverDTO;
 import com.example.ordersservice.dto.OrderMsgDTO;
 import com.example.ordersservice.dto.UnassignedOrderDto;
 import com.example.ordersservice.dto.UpdateOrderDTO;
 import com.example.ordersservice.mapper.OrderDtoMapper;
 import com.example.ordersservice.repo.OrderRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -70,6 +73,16 @@ public class OrderService {
         producerService.sendMessage(orderMsgDTO);
 
         return orderMsgDTO;
+    }
+
+    public List<OrderForDriverDTO> getAllOrdersByDriver(String driver, Pageable pageable) {
+        final List<Order> orders = orderRepo.findByDriver(driver, pageable);
+        List<OrderForDriverDTO> dtos = new ArrayList<>();
+        orders.forEach((order -> {
+            final OrderForDriverDTO orderForDriverDTO = orderDtoMapper.toOrderForDriverDTO(order);
+            dtos.add(orderForDriverDTO);
+        }));
+        return dtos;
     }
 }
 
