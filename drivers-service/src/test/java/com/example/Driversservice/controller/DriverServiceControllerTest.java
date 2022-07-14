@@ -3,6 +3,7 @@ package com.example.Driversservice.controller;
 import com.example.Driversservice.ResourceConverter;
 import com.example.Driversservice.domain.Driver;
 import com.example.Driversservice.domain.OrderStatus;
+import com.example.Driversservice.dto.OrderForDriverDTO;
 import com.example.Driversservice.dto.OrderMsgDTO;
 import com.example.Driversservice.dto.UnassignedOrderDto;
 import com.example.Driversservice.dto.UpdateOrderDTO;
@@ -37,6 +38,11 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -242,15 +248,13 @@ class DriverServiceControllerTest {
         MvcResult mvcResult = mockMvc.perform(get("/driver/unassigned"))
                 .andExpect(status().isOk())
                 .andReturn();
-        List<UnassignedOrderDto> unassignedFromRes = mapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
-        });
-        assertEquals(0, unassignedFromRes.size());
+        assertEquals("[]", mvcResult.getResponse().getContentAsString());
     }
 
     @Test
     @DisplayName("get all orders with wrong driver")
     @SneakyThrows
-    public void getAllWrongDriver(){
+    public void getAllWrongDriver() {
         String username = "test";
         final MvcResult mvcResult = mockMvc.perform(get("/driver/orders").param("driver", username))
                 .andExpect(status().isNotFound())
@@ -258,5 +262,47 @@ class DriverServiceControllerTest {
         final String contentAsString = mvcResult.getResponse().getContentAsString();
         assertEquals("Driver with username " + username +
                 " doesn't exist", contentAsString);
+    }
+
+    @Test
+    @DisplayName("get all orders happy path")
+    @SneakyThrows
+    public void getAllOrders() {
+        String username = "test";
+        Driver user = new Driver();
+        user.setUsername(username);
+        user.setPassword(encoder.encode("test1"));
+        user.setFirstName("First");
+        user.setLastName("Last");
+        user.setPhoneNumber("79031112233");
+        driversRepo.saveAndFlush(user);
+        final ArrayList<OrderForDriverDTO> orderForDriverDTOS = new ArrayList<>();
+        when(orderServiceClient.getOrdersByDriver(0, 5, username)).thenReturn(orderForDriverDTOS);
+        final MvcResult mvcResult = mockMvc.perform(get("/driver/orders").param("driver", username))
+                .andExpect(status().isOk())
+                .andReturn();
+        assertEquals("[]", mvcResult.getResponse().getContentAsString());
+        verify(orderServiceClient, times(1)).getOrdersByDriver(0, 5, username);
+
+    }
+
+    @Test
+    @DisplayName("no params in request")
+    @SneakyThrows
+    public void emptyParamsRequest() {
+        mockMvc.perform(get("/driver/orders"))
+                .andExpect(status().isBadRequest());
+        verify(orderServiceClient, never()).getOrdersByDriver(anyInt(), anyInt(), anyString());
+    }
+
+    @Test
+    @DisplayName("wrong type size param in request")
+    @SneakyThrows
+    public void wrongTypeParam() {
+        mockMvc.perform(get("/driver/orders")
+                        .param("size", "abc")
+                        .param("driver", "driver"))
+                .andExpect(status().isBadRequest());
+        verify(orderServiceClient, never()).getOrdersByDriver(anyInt(), anyInt(), anyString());
     }
 }

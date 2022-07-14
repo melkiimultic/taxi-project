@@ -48,7 +48,7 @@ public class DriverServiceController {
     }
 
     @GetMapping("/orders")
-    public List<OrderForDriverDTO> getOrdersByDriver(@RequestParam(value = "page", defaultValue = "1") int page,
+    public List<OrderForDriverDTO> getOrdersByDriver(@RequestParam(value = "page", defaultValue = "0") int page,
                                                      @RequestParam(value = "size", defaultValue = "5") int size,
                                                      @RequestParam("driver") String driver) {
         driverService.checkDriver(driver);

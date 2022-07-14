@@ -22,7 +22,7 @@ public interface OrderServiceClient {
     List<UnassignedOrderDto> getUnassigned();
 
     @GetMapping(value = "/order/all")
-    List<OrderForDriverDTO> getOrdersByDriver(@RequestParam(value = "page", defaultValue = "1") int page,
+    List<OrderForDriverDTO> getOrdersByDriver(@RequestParam(value = "page", defaultValue = "0") int page,
                                               @RequestParam(value = "size", defaultValue = "5") int size,
                                               @RequestParam("driver") String driver);
 
